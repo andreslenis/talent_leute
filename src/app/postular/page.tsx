@@ -37,8 +37,7 @@ export default function PostularPage() {
         <h1 className="text-2xl font-bold">Formulario de Postulación — Talent Leute</h1>
         <p className="text-sm text-neutral-600">
           Enfoque en residencias geriátricas en Alemania. Rango salarial de referencia 1.300 € – 2.800 € (depende de
-          homologación, empleador y estado federal). Inversión $800.000 COP contado / $1.000.000 COP financiado
-          (inicial $250.000 COP). Recaudo Global66 / NIT 9018988427. WhatsApp 305 249 8099.
+          homologación, empleador y estado federal). Recaudo Global66 / NIT 9018988427. WhatsApp 305 249 8099.
         </p>
         <button onClick={() => setStep("form")} className="rounded bg-black text-white px-4 py-2">
           Iniciar postulación

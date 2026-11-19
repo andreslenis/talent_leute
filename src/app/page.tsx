@@ -42,14 +42,38 @@ export default function Home() {
         </ul>
       </section>
 
-      <section className="rounded-lg border p-6 space-y-3">
-        <h2 className="font-semibold text-lg">Inversión y recaudo</h2>
-        <p className="text-sm text-neutral-600">
-          Contado: $800.000 COP. Financiado: $1.000.000 COP (cuota inicial $250.000 COP + cuotas).
-        </p>
-        <p className="text-sm text-neutral-600">
-          Recaudo: Global66 / NIT 9018988427. Envía el comprobante al WhatsApp oficial 305 249 8099.
-        </p>
+      <section className="space-y-6">
+        <h2 className="text-2xl font-bold">Inversión</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="rounded-lg border p-6 shadow-sm space-y-3">
+            <h3 className="font-semibold text-lg">Contado</h3>
+            <p className="text-2xl font-bold">$800.000 COP</p>
+            <p className="text-sm text-neutral-600">Pago único</p>
+            <ul className="list-disc pl-6 space-y-1 text-sm text-neutral-600">
+              <li>Programa de 16 semanas</li>
+              <li>Alemán aplicado al entorno geriátrico</li>
+              <li>Evaluación continua con refuerzo</li>
+            </ul>
+            <a href="/postular" className="inline-block rounded bg-black text-white px-4 py-2">Postularme</a>
+          </div>
+          <div className="rounded-lg border p-6 shadow-sm space-y-3">
+            <h3 className="font-semibold text-lg">Financiado</h3>
+            <p className="text-2xl font-bold">$1.000.000 COP</p>
+            <p className="text-sm text-neutral-600">Cuota inicial $250.000 COP + cuotas</p>
+            <ul className="list-disc pl-6 space-y-1 text-sm text-neutral-600">
+              <li>Programa de 16 semanas</li>
+              <li>Alemán aplicado al entorno geriátrico</li>
+              <li>Evaluación continua con refuerzo</li>
+            </ul>
+            <a href="/postular" className="inline-block rounded bg-black text-white px-4 py-2">Postularme</a>
+          </div>
+        </div>
+        <details className="rounded-lg border p-4">
+          <summary className="cursor-pointer font-medium">Ver instrucciones oficiales de pago</summary>
+          <p className="mt-2 text-sm text-neutral-600">
+            Recaudo: Global66 / Manager FC (NIT 9018988427). Envía el comprobante al WhatsApp oficial 305 249 8099.
+          </p>
+        </details>
       </section>
     </div>
   );
