@@ -14,6 +14,7 @@ const schema = z.object({
 });
 
 export default function PostularPage() {
+  const [step, setStep] = useState<"intro" | "form">("intro");
   const [status, setStatus] = useState<string | null>(null);
   const [errors, setErrors] = useState<string | null>(null);
 
@@ -34,9 +35,32 @@ export default function PostularPage() {
     setStatus(res.ok ? "Postulación enviada." : "Error al enviar.");
   }
 
+  if (step === "intro") {
+    return (
+      <section className="mx-auto max-w-2xl px-4 py-12 space-y-6">
+        <h1 className="text-2xl font-bold">Formulario de Postulación — Talent Leute</h1>
+        <p className="text-sm text-neutral-600">
+          Antes de iniciar, confirma que deseas responder el formulario de postulación. Enfoque en residencias
+          geriátricas en Alemania. Rango salarial de referencia: 1.300 € – 2.800 € mensuales (depende de
+          homologación, empleador y estado federal). Inversión: $800.000 COP contado o $1.000.000 COP financiado
+          (inicial $250.000 COP). Recaudo Global66 / NIT 9018988427. WhatsApp oficial: 305 249 8099.
+        </p>
+        <button
+          onClick={() => setStep("form")}
+          className="rounded bg-black text-white px-4 py-2"
+        >
+          Iniciar postulación
+        </button>
+      </section>
+    );
+  }
+
   return (
     <section className="mx-auto max-w-2xl px-4 py-12">
       <h1 className="text-2xl font-bold">Formulario de Postulación</h1>
+      <button onClick={() => setStep("intro")} className="text-sm underline mb-4">
+        Volver
+      </button>
       <form onSubmit={onSubmit} className="mt-6 space-y-4">
         <input name="fullName" placeholder="Nombre completo" className="w-full border rounded p-2" required />
         <input name="email" type="email" placeholder="Correo" className="w-full border rounded p-2" required />
