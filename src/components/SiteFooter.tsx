@@ -1,6 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export function SiteFooter() {
+  const [year, setYear] = useState<number | null>(null);
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
+
   return (
     <footer className="mt-auto border-t border-slate-200 bg-white">
       <div className="mx-auto grid max-w-5xl gap-6 px-4 py-10 sm:px-6 md:grid-cols-3">
@@ -37,7 +46,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-slate-100 px-4 py-4 text-center text-xs text-slate-500">
-        © {new Date().getFullYear()} Talent Leute. Todos los derechos reservados.
+        © {year ?? "——"} Talent Leute. Todos los derechos reservados.
       </div>
     </footer>
   );

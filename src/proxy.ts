@@ -1,12 +1,20 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/env";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/env";
 import { homeForRole, type Role } from "@/lib/types";
 
-const PROTECTED_PREFIXES = ["/portal", "/equipo", "/admin"];
+const PUBLIC_PATHS = ["/login", "/activar", "/recuperar", "/actualizar-clave"];
 
-function isProtected(pathname: string) {
-  return PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+const ADMIN_PREFIXES = ["/admin"];
+const STAFF_PREFIXES = ["/equipo", "/admin"];
+const PORTAL_PREFIXES = ["/portal"];
+
+function isPublicPath(pathname: string) {
+  return PUBLIC_PATHS.includes(pathname);
+}
+
+function startsWithAny(pathname: string, prefixes: string[]) {
+  return prefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
 export async function proxy(req: NextRequest) {
@@ -31,25 +39,50 @@ export async function proxy(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = req.nextUrl;
+  const pathname = req.nextUrl.pathname;
 
-  if (!user && isProtected(pathname)) {
+  // Redirect authenticated users away from auth pages
+  if (user && isPublicPath(pathname)) {
     const url = req.nextUrl.clone();
-    url.pathname = "/login";
-    url.search = "";
+    url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 
-  if (user && pathname === "/login") {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
-    const role = ((profile?.role as Role | undefined) ?? "alumno") as Role;
+  // Protect dashboard routes
+  if (!user) {
+    if (
+      startsWithAny(pathname, ADMIN_PREFIXES) ||
+      startsWithAny(pathname, STAFF_PREFIXES) ||
+      startsWithAny(pathname, PORTAL_PREFIXES) ||
+      pathname === "/dashboard"
+    ) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+    return res;
+  }
+
+  // Fetch profile for role-based checks
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const role = profile?.role as Role | undefined;
+
+  // Admin routes: only admin
+  if (startsWithAny(pathname, ADMIN_PREFIXES) && role !== "admin") {
     const url = req.nextUrl.clone();
-    url.pathname = homeForRole(role);
-    url.search = "";
+    url.pathname = role ? "/dashboard" : "/login";
+    return NextResponse.redirect(url);
+  }
+
+  // Staff routes: staff, trainer, admin
+  if (startsWithAny(pathname, STAFF_PREFIXES) && !["staff", "trainer", "admin"].includes(role ?? "")) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 
@@ -57,5 +90,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/portal/:path*", "/equipo/:path*", "/admin/:path*", "/login"],
+  matcher: ["/admin/:path*", "/equipo/:path*", "/portal/:path*", "/dashboard"],
 };
